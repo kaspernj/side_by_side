@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+time_total_start = Time.new
+processes_to_run = []
+
+ARGV.each do |arg|
+  process_to_run = ProcessToRun.new(command: arg)
+  process_to_run.run_async
+
+  processes_to_run << process_to_run
+end
+
+puts "Started processes: #{processes_to_run.length}"
+
+processes_to_run.each do |process_to_run|
+  time_start = Time.new
+
+  puts "Process: #{process_to_run.command}"
+
+  process_to_run.monitor.synchronize do
+    # Print output generated so far
+    process_to_run.output.each do |out|
+      output!(out)
+    end
+
+    # Print output to come
+    process_to_run.on_output do |out|
+      output!(out)
+    end
+  end
+
+  # Wait for process to finish
+  process_to_run.join
+end
+
+time_total_stop = Time.new
+
+# Return failed exit status if any of the processes failed
+puts "Status for #{processes_to_run.length} processes"
+puts
+result_exit_status = 0
+
+processes_to_run.each do |process_to_run|
+  puts process_to_run.command
+  puts "  Exit status: #{process_to_run.exit_status}"
+  puts "  Seconds: #{process_to_run.seconds}"
+  puts
+
+  result_exit_status = process_to_run.exit_status if process_to_run.exit_status != 0
+end
+
+puts "Seconds total: #{time_total_stop.to_f - time_total_start.to_f}"
+puts "Result: #{result_exit_status}"
+
+exit(result_exit_status)
