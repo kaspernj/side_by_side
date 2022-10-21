@@ -20,7 +20,7 @@ Try to order the commands with the fastest command first for showing the output 
 but the second command will not output anything until the first command is done even though the second command will be running simultanious with the first).
 
 ```bash
-side_by_side 'yarn scsslint' 'yarn eslint' 'bundle exec rubocop'
+side_by_side "yarn scsslint" "yarn eslint" "bundle exec rubocop"
 ```
 
 ## Development
