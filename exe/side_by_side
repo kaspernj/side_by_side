@@ -1,16 +1,28 @@
 #!/usr/bin/env ruby
 
+require_relative "../lib/side_by_side"
+
 time_total_start = Time.new
 processes_to_run = []
 
 ARGV.each do |arg|
-  process_to_run = ProcessToRun.new(command: arg)
+  process_to_run = SideBySide::ProcessToRun.new(command: arg)
   process_to_run.run_async
 
   processes_to_run << process_to_run
 end
 
 puts "Started processes: #{processes_to_run.length}"
+
+def output!(type:, output:)
+  if type == :stdout
+    $stdout.print output
+  elsif type == :stderr
+    $stderr.print output
+  else
+    raise "Unknown type: #{type}"
+  end
+end
 
 processes_to_run.each do |process_to_run|
   time_start = Time.new
@@ -20,12 +32,12 @@ processes_to_run.each do |process_to_run|
   process_to_run.monitor.synchronize do
     # Print output generated so far
     process_to_run.output.each do |out|
-      output!(out)
+      output!(**out)
     end
 
     # Print output to come
     process_to_run.on_output do |out|
-      output!(out)
+      output!(**out)
     end
   end
 

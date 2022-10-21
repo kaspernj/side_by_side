@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
 class SideBySide
-  autoload :ProcessToRun, "#{__dir__}/process_to_run"
+  autoload :ProcessToRun, "#{__dir__}/side_by_side/process_to_run"
 end
