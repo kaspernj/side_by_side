@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = "side_by_side"
-  spec.version = "0.0.0"
+  spec.version = "0.0.1"
   spec.authors = ["kaspernj"]
   spec.email = ["k@spernj.org"]
 
